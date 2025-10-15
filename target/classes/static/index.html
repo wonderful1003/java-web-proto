@@ -13,10 +13,6 @@
                 <span class="logo">📈</span>
                 <span class="brand-name">주식 물타기 계산기</span>
             </div>
-            <div class="nav-menu">
-                <span class="username" id="username">사용자</span>
-                <button class="logout-btn" onclick="logout()">로그아웃</button>
-            </div>
         </div>
     </nav>
 
@@ -27,34 +23,74 @@
         </div>
 
         <div class="calculator-card">
-            <h2>물타기 계산기</h2>
-            <p class="description">기존 보유 주식과 추가 매수 시 평균 단가를 계산합니다</p>
+            <div class="mode-toggle">
+                <button class="mode-btn active" data-mode="forward">평단가 계산</button>
+                <button class="mode-btn" data-mode="reverse">목표 평단가 역산</button>
+            </div>
 
-            <form class="calc-form" id="calcForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>기존 매수 단가 (원)</label>
-                        <input type="number" id="oldPrice" placeholder="10000" required>
-                    </div>
-                    <div class="form-group">
-                        <label>기존 보유 수량 (주)</label>
-                        <input type="number" id="oldQuantity" placeholder="100" required>
-                    </div>
-                </div>
+            <!-- 평단가 계산 모드 -->
+            <div id="forwardMode" class="calc-mode">
+                <h2>물타기 계산기</h2>
+                <p class="description">기존 보유 주식과 추가 매수 시 평균 단가를 계산합니다</p>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>추가 매수 단가 (원)</label>
-                        <input type="number" id="newPrice" placeholder="8000" required>
+                <form class="calc-form" id="forwardForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>기존 매수 단가 (원)</label>
+                            <input type="number" id="fOldPrice" placeholder="10000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>기존 보유 수량 (주)</label>
+                            <input type="number" id="fOldQuantity" placeholder="100" required>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>추가 매수 수량 (주)</label>
-                        <input type="number" id="newQuantity" placeholder="50" required>
-                    </div>
-                </div>
 
-                <button type="submit" class="calc-button">계산하기</button>
-            </form>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>추가 매수 단가 (원)</label>
+                            <input type="number" id="fNewPrice" placeholder="8000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>추가 매수 수량 (주)</label>
+                            <input type="number" id="fNewQuantity" placeholder="50" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="calc-button">계산하기</button>
+                </form>
+            </div>
+
+            <!-- 목표 평단가 역산 모드 -->
+            <div id="reverseMode" class="calc-mode" style="display: none;">
+                <h2>목표 평단가 역산</h2>
+                <p class="description">목표 평단가를 달성하기 위한 추가 매수량을 계산합니다</p>
+
+                <form class="calc-form" id="reverseForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>현재 평단가 (원)</label>
+                            <input type="number" id="rCurrentAvg" placeholder="10000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>현재 보유 수량 (주)</label>
+                            <input type="number" id="rCurrentQuantity" placeholder="100" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>목표 평단가 (원)</label>
+                            <input type="number" id="rTargetAvg" placeholder="9000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>추가 매수 단가 (원)</label>
+                            <input type="number" id="rBuyPrice" placeholder="8000" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="calc-button">계산하기</button>
+                </form>
+            </div>
 
             <div class="result-section" id="resultSection" style="display: none;">
                 <h3>계산 결과</h3>

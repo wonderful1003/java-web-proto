@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(mkdir:*)",
-      "Bash(mvn spring-boot:run:*)"
+      "Bash(mvn spring-boot:run:*)",
+      "Bash(tasklist)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(mvn clean:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

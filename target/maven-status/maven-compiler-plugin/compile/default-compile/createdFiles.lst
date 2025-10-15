@@ -1,6 +1,2 @@
 com\example\demo\DemoApplication.class
-com\example\demo\LoginResponse.class
 com\example\demo\WebController.class
-com\example\demo\AuthController$1.class
-com\example\demo\AuthController.class
-com\example\demo\LoginRequest.class
