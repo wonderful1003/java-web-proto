@@ -22,5 +22,18 @@ buildNumber.properties
 .DS_Store
 Thumbs.db
 
+# Logs
+*.log
+*.err
+
+# Temporary files
+nul
+*.tmp
+*.bak
+
+# Batch files (local scripts)
+run.bat
+stop.bat
+
 # Claude Code local settings
 .claude/settings.local.json

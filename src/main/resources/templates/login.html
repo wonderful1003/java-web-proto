@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 - 주식 물타기 계산기</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="login-logo">📈</div>
+            <h1 class="login-title">주식 물타기 계산기</h1>
+            <p class="login-subtitle">로그인하여 시작하세요</p>
+        </div>
+
+        <div th:if="${error}" class="alert alert-error">
+            <span th:text="${error}">에러 메시지</span>
+        </div>
+
+        <div th:if="${message}" class="alert alert-success">
+            <span th:text="${message}">성공 메시지</span>
+        </div>
+
+        <form th:action="@{/perform-login}" method="post">
+            <div class="form-group">
+                <label>아이디</label>
+                <input type="text" name="username" placeholder="아이디를 입력하세요" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label>비밀번호</label>
+                <input type="password" name="password" placeholder="비밀번호를 입력하세요" required>
+            </div>
+
+            <button type="submit" class="login-btn">로그인</button>
+        </form>
+
+        <div class="demo-accounts">
+            <h4>🎯 데모 계정</h4>
+            <div class="demo-account">
+                <strong>관리자</strong> - admin / admin123
+            </div>
+            <div class="demo-account">
+                <strong>사용자</strong> - user / user123
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            <strong>⚠️ 투자 유의사항</strong>
+            주식투자의 책임은 본인에게 있습니다
+        </div>
+    </div>
+</body>
+</html>
