@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>포트폴리오 - 터틀맨 타운</title>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- 사이드바 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <span class="sidebar-logo">🐢</span>
+                    <span class="sidebar-title">터틀맨 타운</span>
+                </div>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" th:text="${#strings.substring(user.name, 0, 1)}">U</div>
+                <div class="user-details">
+                    <div class="user-name" th:text="${user.name}">사용자</div>
+                    <span class="user-role" th:classappend="${isAdmin} ? 'admin' : ''"
+                          th:text="${isAdmin} ? 'ADMIN' : 'USER'">USER</span>
+                </div>
+            </div>
+
+            <div class="sidebar-menu">
+                <a th:each="menu : ${menus}"
+                   th:href="@{${menu.path}}"
+                   class="menu-item"
+                   th:classappend="${menu.path == '/portfolio'} ? 'active' : ''">
+                    <span class="menu-icon" th:text="${menu.icon}">🏠</span>
+                    <span class="menu-text" th:text="${menu.name}">메뉴</span>
+                </a>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="quote-box">
+                    <div class="quote-text">
+                        나는 내 영혼의 주인<br>
+                        내 영혼의 선장
+                    </div>
+                    <div class="quote-author">- Invictus</div>
+                </div>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="logout-btn">로그아웃</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 메인 컨텐츠 -->
+        <div class="main-content">
+            <div class="top-bar">
+                <h2 class="page-title">💼 내 포트폴리오</h2>
+                <button onclick="document.getElementById('addModal').style.display='block'" class="btn-primary">+ 종목 추가</button>
+            </div>
+
+            <!-- 포트폴리오 요약 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-label">총 투자금액</div>
+                    <div class="stat-value" th:text="${#numbers.formatDecimal(totalInvestment, 0, 'COMMA', 0, 'POINT')} + '원'">0원</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-label">평가금액</div>
+                    <div class="stat-value" th:text="${#numbers.formatDecimal(totalEvaluation, 0, 'COMMA', 0, 'POINT')} + '원'">0원</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" th:text="${totalProfitLoss >= 0} ? '📈' : '📉'">📈</div>
+                    <div class="stat-label">평가손익</div>
+                    <div class="stat-value" th:style="${totalProfitLoss >= 0} ? 'color: #ef4444' : 'color: #3b82f6'"
+                         th:text="${totalProfitLoss >= 0 ? '+' : ''} + ${#numbers.formatDecimal(totalProfitLoss, 0, 'COMMA', 0, 'POINT')} + '원'">0원</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-label">수익률</div>
+                    <div class="stat-value" th:style="${totalProfitLossRate >= 0} ? 'color: #ef4444' : 'color: #3b82f6'"
+                         th:text="${totalProfitLossRate >= 0 ? '+' : ''} + ${#numbers.formatDecimal(totalProfitLossRate, 1, 'COMMA', 2, 'POINT')} + '%'">0%</div>
+                </div>
+            </div>
+
+            <!-- 포트폴리오 목록 -->
+            <div class="content-card">
+                <h3>보유 종목</h3>
+                <table class="data-table" th:if="${portfolios.size() > 0}">
+                    <thead>
+                        <tr>
+                            <th>종목명</th>
+                            <th>종목코드</th>
+                            <th>보유수량</th>
+                            <th>평균단가</th>
+                            <th>현재가</th>
+                            <th>평가금액</th>
+                            <th>손익</th>
+                            <th>수익률</th>
+                            <th>삭제</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="portfolio : ${portfolios}">
+                            <td th:text="${portfolio.stockName}">삼성전자</td>
+                            <td th:text="${portfolio.stockCode}">005930</td>
+                            <td th:text="${portfolio.quantity} + '주'">100주</td>
+                            <td th:text="${#numbers.formatDecimal(portfolio.averagePrice, 0, 'COMMA', 0, 'POINT')} + '원'">70,000원</td>
+                            <td th:text="${#numbers.formatDecimal(portfolio.currentPrice != null ? portfolio.currentPrice : portfolio.averagePrice, 0, 'COMMA', 0, 'POINT')} + '원'">72,000원</td>
+                            <td th:text="${#numbers.formatDecimal((portfolio.currentPrice != null ? portfolio.currentPrice : portfolio.averagePrice) * portfolio.quantity, 0, 'COMMA', 0, 'POINT')} + '원'">7,200,000원</td>
+                            <td th:with="pl=((portfolio.currentPrice != null ? portfolio.currentPrice : portfolio.averagePrice) * portfolio.quantity - portfolio.totalInvestment)"
+                                th:style="${pl >= 0} ? 'color: #ef4444' : 'color: #3b82f6'"
+                                th:text="${pl >= 0 ? '+' : ''} + ${#numbers.formatDecimal(pl, 0, 'COMMA', 0, 'POINT')} + '원'">+200,000원</td>
+                            <td th:with="plr=(((portfolio.currentPrice != null ? portfolio.currentPrice : portfolio.averagePrice) * portfolio.quantity - portfolio.totalInvestment) / portfolio.totalInvestment * 100)"
+                                th:style="${plr >= 0} ? 'color: #ef4444; font-weight: bold' : 'color: #3b82f6; font-weight: bold'"
+                                th:text="${plr >= 0 ? '+' : ''} + ${#numbers.formatDecimal(plr, 1, 'COMMA', 2, 'POINT')} + '%'">+2.86%</td>
+                            <td>
+                                <form th:action="@{/portfolio/delete/{id}(id=${portfolio.id})}" method="post" style="display: inline;">
+                                    <button type="submit" class="btn-danger-small" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p th:if="${portfolios.size() == 0}" style="text-align: center; color: #666; padding: 40px;">
+                    아직 등록된 종목이 없습니다. 종목을 추가해보세요!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 종목 추가 모달 -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('addModal').style.display='none'">&times;</span>
+            <h2>종목 추가</h2>
+            <form th:action="@{/portfolio/add}" method="post">
+                <div class="form-group">
+                    <label>종목명</label>
+                    <input type="text" name="stockName" placeholder="예: 삼성전자" required>
+                </div>
+                <div class="form-group">
+                    <label>종목코드</label>
+                    <input type="text" name="stockCode" placeholder="예: 005930" required>
+                </div>
+                <div class="form-group">
+                    <label>보유 수량</label>
+                    <input type="number" name="quantity" placeholder="예: 100" required>
+                </div>
+                <div class="form-group">
+                    <label>평균 매수 단가 (원)</label>
+                    <input type="number" step="0.01" name="averagePrice" placeholder="예: 70000" required>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">추가하기</button>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #000;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .btn-danger-small {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .btn-danger-small:hover {
+            background: #dc2626;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .data-table th, .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+    </style>
+</body>
+</html>

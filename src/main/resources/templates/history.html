@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>계산 히스토리 - 터틀맨 타운</title>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- 사이드바 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <span class="sidebar-logo">🐢</span>
+                    <span class="sidebar-title">터틀맨 타운</span>
+                </div>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" th:text="${#strings.substring(user.name, 0, 1)}">U</div>
+                <div class="user-details">
+                    <div class="user-name" th:text="${user.name}">사용자</div>
+                    <span class="user-role" th:classappend="${isAdmin} ? 'admin' : ''"
+                          th:text="${isAdmin} ? 'ADMIN' : 'USER'">USER</span>
+                </div>
+            </div>
+
+            <div class="sidebar-menu">
+                <a th:each="menu : ${menus}"
+                   th:href="@{${menu.path}}"
+                   class="menu-item"
+                   th:classappend="${menu.path == '/history'} ? 'active' : ''">
+                    <span class="menu-icon" th:text="${menu.icon}">🏠</span>
+                    <span class="menu-text" th:text="${menu.name}">메뉴</span>
+                </a>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="quote-box">
+                    <div class="quote-text">
+                        나는 내 영혼의 주인<br>
+                        내 영혼의 선장
+                    </div>
+                    <div class="quote-author">- Invictus</div>
+                </div>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="logout-btn">로그아웃</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 메인 컨텐츠 -->
+        <div class="main-content">
+            <div class="top-bar">
+                <h2 class="page-title">📜 계산 히스토리</h2>
+                <div>총 <span th:text="${histories.size()}">0</span>건</div>
+            </div>
+
+            <!-- 계산 히스토리 목록 -->
+            <div class="content-card">
+                <h3>물타기 계산 기록</h3>
+                <div th:if="${histories.size() > 0}" class="history-list">
+                    <div th:each="history : ${histories}" class="history-item">
+                        <div class="history-header">
+                            <span class="history-type" th:text="${history.calculationType == 'FORWARD'} ? '📊 평단가 계산' : '🎯 역산 계산'">계산 유형</span>
+                            <span class="history-date" th:text="${#temporals.format(history.createdAt, 'yyyy-MM-dd HH:mm')}">2025-10-17 15:30</span>
+                        </div>
+                        <div class="history-content">
+                            <div class="history-detail" th:if="${history.stockName != null}">
+                                <strong>종목:</strong> <span th:text="${history.stockName}">삼성전자</span>
+                            </div>
+                            <div class="history-detail">
+                                <strong>기존:</strong>
+                                <span th:text="${#numbers.formatDecimal(history.oldPrice, 0, 'COMMA', 0, 'POINT')}">70,000</span>원 ×
+                                <span th:text="${history.oldQuantity}">100</span>주
+                            </div>
+                            <div class="history-detail">
+                                <strong>추가:</strong>
+                                <span th:text="${#numbers.formatDecimal(history.newPrice, 0, 'COMMA', 0, 'POINT')}">65,000</span>원 ×
+                                <span th:text="${history.newQuantity}">50</span>주
+                            </div>
+                            <div class="history-result">
+                                <strong>결과:</strong>
+                                평균 단가 <span class="result-value" th:text="${#numbers.formatDecimal(history.averagePrice, 0, 'COMMA', 0, 'POINT')}">68,333</span>원
+                                / 총 <span th:text="${history.totalQuantity}">150</span>주
+                                / 투자금액 <span th:text="${#numbers.formatDecimal(history.totalAmount, 0, 'COMMA', 0, 'POINT')}">10,250,000</span>원
+                            </div>
+                        </div>
+                        <div class="history-actions">
+                            <form th:action="@{/history/delete/{id}(id=${history.id})}" method="post" style="display: inline;">
+                                <button type="submit" class="btn-danger-small" onclick="return confirm('삭제하시겠습니까?')">삭제</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <p th:if="${histories.size() == 0}" style="text-align: center; color: #666; padding: 40px;">
+                    아직 계산 기록이 없습니다. 물타기 계산기를 사용해보세요!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .history-list {
+            margin-top: 20px;
+        }
+        .history-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        .history-type {
+            font-weight: 700;
+            color: #333;
+            font-size: 16px;
+        }
+        .history-date {
+            color: #666;
+            font-size: 14px;
+        }
+        .history-content {
+            margin-bottom: 15px;
+        }
+        .history-detail {
+            margin: 8px 0;
+            color: #555;
+            font-size: 14px;
+        }
+        .history-result {
+            margin-top: 12px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #333;
+        }
+        .result-value {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .history-actions {
+            text-align: right;
+        }
+        .btn-danger-small {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .btn-danger-small:hover {
+            background: #dc2626;
+        }
+    </style>
+</body>
+</html>

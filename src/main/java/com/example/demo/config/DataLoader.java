@@ -50,11 +50,11 @@ public class DataLoader implements CommandLineRunner {
         Menu menu2 = createMenu("물타기 계산", "/calculator", "📊", null, 2);
         Menu menu3 = createMenu("포트폴리오", "/portfolio", "💼", null, 3);
         Menu menu4 = createMenu("계산 히스토리", "/history", "📜", null, 4);
-        Menu menu5 = createMenu("내 정보", "/profile", "👤", null, 5);
-        Menu menu6 = createMenu("회원 관리", "/admin/users", "👥", null, 6);
-        Menu menu7 = createMenu("권한 관리", "/admin/roles", "🔑", null, 7);
-        Menu menu8 = createMenu("메뉴 관리", "/admin/menus", "📋", null, 8);
-        Menu menu9 = createMenu("시스템 설정", "/admin/settings", "⚙️", null, 9);
+        Menu menu5 = createMenu("자유게시판", "/board", "💬", null, 5);
+        Menu menu6 = createMenu("내 정보", "/profile", "👤", null, 6);
+        Menu menu7 = createMenu("회원 관리", "/admin/users", "👥", null, 7);
+        Menu menu8 = createMenu("권한 관리", "/admin/roles", "🔑", null, 8);
+        Menu menu9 = createMenu("메뉴 관리", "/admin/menus", "📋", null, 9);
 
         menu1 = menuRepository.save(menu1);
         menu2 = menuRepository.save(menu2);
@@ -72,7 +72,7 @@ public class DataLoader implements CommandLineRunner {
         adminMenus.add(menu2);
         adminMenus.add(menu3);
         adminMenus.add(menu4);
-        adminMenus.add(menu6);
+        adminMenus.add(menu5);
         adminMenus.add(menu7);
         adminMenus.add(menu8);
         adminMenus.add(menu9);
@@ -85,6 +85,7 @@ public class DataLoader implements CommandLineRunner {
         userMenus.add(menu3);
         userMenus.add(menu4);
         userMenus.add(menu5);
+        userMenus.add(menu6);
         userRole.setMenus(userMenus);
         roleRepository.save(userRole);
 

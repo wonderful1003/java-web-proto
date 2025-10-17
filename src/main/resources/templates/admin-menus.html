@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>메뉴 관리 - 터틀맨 타운</title>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+    <div class="dashboard">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <span class="sidebar-logo">🐢</span>
+                    <span class="sidebar-title">터틀맨 타운</span>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar" th:text="${#strings.substring(user.name, 0, 1)}">U</div>
+                <div class="user-details">
+                    <div class="user-name" th:text="${user.name}">사용자</div>
+                    <span class="user-role admin">ADMIN</span>
+                </div>
+            </div>
+            <div class="sidebar-menu">
+                <a th:each="menu : ${menus}" th:href="@{${menu.path}}" class="menu-item" th:classappend="${menu.path == '/admin/menus'} ? 'active' : ''">
+                    <span class="menu-icon" th:text="${menu.icon}">🏠</span>
+                    <span class="menu-text" th:text="${menu.name}">메뉴</span>
+                </a>
+            </div>
+            <div class="sidebar-footer">
+                <div class="quote-box">
+                    <div class="quote-text">나는 내 영혼의 주인<br>내 영혼의 선장</div>
+                    <div class="quote-author">- Invictus</div>
+                </div>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="logout-btn">로그아웃</button>
+                </form>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="top-bar">
+                <h2 class="page-title">📋 메뉴 관리</h2>
+                <button onclick="document.getElementById('addModal').style.display='block'" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600;">+ 메뉴 추가</button>
+            </div>
+            <div class="content-card">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <thead>
+                        <tr style="background: #f8f9fa;">
+                            <th style="padding: 12px; text-align: center; border-bottom: 2px solid #e1e8ed;">순서</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e1e8ed;">아이콘</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e1e8ed;">메뉴명</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e1e8ed;">경로</th>
+                            <th style="padding: 12px; text-align: center; border-bottom: 2px solid #e1e8ed;">표시 여부</th>
+                            <th style="padding: 12px; text-align: center; border-bottom: 2px solid #e1e8ed;">관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="menu : ${allMenus}" style="border-bottom: 1px solid #e1e8ed;">
+                            <td style="padding: 12px; text-align: center;" th:text="${menu.sortOrder}">1</td>
+                            <td style="padding: 12px; font-size: 20px;" th:text="${menu.icon}">🏠</td>
+                            <td style="padding: 12px;" th:text="${menu.name}">대시보드</td>
+                            <td style="padding: 12px;" th:text="${menu.path}">/dashboard</td>
+                            <td style="padding: 12px; text-align: center;">
+                                <span th:if="${menu.visible}" style="color: #10b981; font-weight: 600;">표시</span>
+                                <span th:unless="${menu.visible}" style="color: #ef4444; font-weight: 600;">숨김</span>
+                            </td>
+                            <td style="padding: 12px; text-align: center;">
+                                <form th:action="@{/admin/menus/{id}/toggle-visible(id=${menu.id})}" method="post" style="display: inline; margin-right: 5px;">
+                                    <button type="submit" style="background: #f59e0b; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">토글</button>
+                                </form>
+                                <form th:action="@{/admin/menus/{id}/delete(id=${menu.id})}" method="post" style="display: inline;">
+                                    <button type="submit" onclick="return confirm('삭제하시겠습니까?')" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">삭제</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="addModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+        <div style="background-color: white; margin: 10% auto; padding: 30px; border-radius: 15px; width: 90%; max-width: 500px;">
+            <span onclick="document.getElementById('addModal').style.display='none'" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+            <h2>메뉴 추가</h2>
+            <form th:action="@{/admin/menus/add}" method="post">
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 5px;">메뉴명</label>
+                    <input type="text" name="name" placeholder="예: 새 메뉴" required style="width: 100%; padding: 10px; border: 2px solid #e1e8ed; border-radius: 8px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 5px;">경로</label>
+                    <input type="text" name="path" placeholder="예: /new-menu" required style="width: 100%; padding: 10px; border: 2px solid #e1e8ed; border-radius: 8px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 5px;">아이콘 (이모지)</label>
+                    <input type="text" name="icon" placeholder="예: 🎯" required style="width: 100%; padding: 10px; border: 2px solid #e1e8ed; border-radius: 8px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 5px;">정렬 순서</label>
+                    <input type="number" name="sortOrder" placeholder="예: 10" required style="width: 100%; padding: 10px; border: 2px solid #e1e8ed; border-radius: 8px;">
+                </div>
+                <button type="submit" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: 600;">추가하기</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
