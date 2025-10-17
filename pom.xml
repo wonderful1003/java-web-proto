@@ -7,7 +7,7 @@
   <name>java-web-proto</name>
   <description>Minimal Spring Boot web prototype</description>
   <properties>
-  <java.version>21</java.version>
+  <java.version>17</java.version>
     <spring-boot.version>3.3.5</spring-boot.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -105,7 +105,7 @@
         <version>3.11.0</version>
         <configuration>
           <!-- Use the release flag when targeting newer Java versions -->
-          <release>21</release>
+          <release>17</release>
         </configuration>
       </plugin>
     </plugins>

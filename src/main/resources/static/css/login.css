@@ -28,8 +28,15 @@ body {
 }
 
 .login-logo {
-    font-size: 48px;
+    font-size: 64px;
     margin-bottom: 10px;
+    filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.5));
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
 }
 
 .login-title {
@@ -128,6 +135,12 @@ body {
     margin: 5px 0;
     background: white;
     border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.demo-account:hover {
+    background: #e8eaf6;
+    transform: translateX(5px);
 }
 
 .demo-account strong {

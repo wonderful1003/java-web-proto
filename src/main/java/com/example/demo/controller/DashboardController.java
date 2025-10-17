@@ -4,7 +4,7 @@ import com.example.demo.entity.Menu;
 import com.example.demo.entity.User;
 import com.example.demo.service.MenuService;
 import com.example.demo.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
@@ -13,14 +13,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
+/**
+ * 대시보드 컨트롤러
+ * 로그인 후 메인 대시보드 페이지 및 사용자별 메뉴 제공
+ */
 @Controller
+@RequiredArgsConstructor
 public class DashboardController {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private MenuService menuService;
+    private final UserService userService;
+    private final MenuService menuService;
 
     @GetMapping("/dashboard")
     public String dashboard(Authentication authentication, Model model) {
