@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원 탈퇴 - 터틀맨 타운</title>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .profile-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .warning-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .warning-title::before {
+            content: '⚠️';
+            margin-right: 8px;
+            font-size: 24px;
+        }
+
+        .warning-text {
+            color: #856404;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #dc3545;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <span class="sidebar-logo">🐢</span>
+                    <span class="sidebar-title">터틀맨 타운</span>
+                </div>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" th:text="${#strings.substring(user.name, 0, 1)}">U</div>
+                <div class="user-details">
+                    <div class="user-name" th:text="${user.name}">사용자</div>
+                    <span class="user-role" th:classappend="${isAdmin} ? 'admin' : ''"
+                          th:text="${isAdmin} ? 'ADMIN' : 'USER'">USER</span>
+                </div>
+            </div>
+
+            <div class="sidebar-menu">
+                <a th:each="menu : ${menus}"
+                   th:href="@{${menu.path}}"
+                   class="menu-item"
+                   th:classappend="${menu.path == '/profile'} ? 'active' : ''">
+                    <span class="menu-icon" th:text="${menu.icon}">📋</span>
+                    <span class="menu-text" th:text="${menu.name}">메뉴</span>
+                </a>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="quote-box">
+                    <div class="quote-text">
+                        나는 내 영혼의 주인<br>
+                        내 영혼의 선장
+                    </div>
+                    <div class="quote-author">- Invictus</div>
+                </div>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="logout-btn">로그아웃</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="content-header">
+                <h1>회원 탈퇴</h1>
+            </div>
+
+            <div class="profile-container">
+                <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+                <div class="profile-card">
+                    <div class="warning-box">
+                        <div class="warning-title">정말 탈퇴하시겠습니까?</div>
+                        <div class="warning-text">• 회원 탈퇴 시 계정이 비활성화되며 로그인할 수 없습니다.</div>
+                        <div class="warning-text">• 작성한 게시글과 댓글은 유지되지만 수정/삭제할 수 없습니다.</div>
+                        <div class="warning-text">• 탈퇴 후 동일한 아이디로 재가입할 수 없습니다.</div>
+                        <div class="warning-text">• 이 작업은 되돌릴 수 없습니다.</div>
+                    </div>
+
+                    <form th:action="@{/profile/delete}" method="post" onsubmit="return confirm('정말로 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.');">
+                        <div class="form-group">
+                            <label class="form-label" for="password">비밀번호 확인 *</label>
+                            <input type="password" id="password" name="password"
+                                   class="form-input" placeholder="비밀번호를 입력하세요" required>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="submit" class="btn btn-danger">탈퇴하기</button>
+                            <a th:href="@{/profile}" class="btn btn-secondary">취소</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
