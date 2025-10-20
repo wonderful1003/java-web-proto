@@ -1,21 +1,30 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import java.time.LocalDateTime;
 
 /**
  * 포트폴리오 엔티티
- * 사용자의 주식 보유 내역 관리
+ *
+ * 사용자가 보유한 주식 정보를 관리하는 엔티티입니다.
+ * 각 사용자는 여러 개의 포트폴리오를 가질 수 있으며,
+ * 각 포트폴리오는 하나의 주식 종목에 대한 정보를 담고 있습니다.
+ *
+ * @author JAVA-WEB-PROTO
+ * @version 1.0
  */
 @Entity
 @Table(name = "portfolios")
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Portfolio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

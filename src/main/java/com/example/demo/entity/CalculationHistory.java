@@ -1,57 +1,97 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import java.time.LocalDateTime;
 
 /**
- * 계산 히스토리 엔티티
- * 사용자의 물타기 계산 기록 저장
+ * 평단가 계산 기록 엔티티
+ *
+ * 사용자의 평단가(평균 단가) 계산 기록을 저장하는 엔티티입니다.
+ * 추가 매수 시 새로운 평균 매수가를 계산하고 기록을 남깁니다.
+ *
+ * @author JAVA-WEB-PROTO
+ * @version 1.0
  */
 @Entity
 @Table(name = "calculation_history")
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CalculationHistory {
+
+    /**
+     * 기본 키 (자동 증가)
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * 계산 기록 소유자 (사용자)
+     * 지연 로딩으로 설정
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    /**
+     * 주식 코드 (예: "005930" - 삼성전자)
+     */
     @Column(nullable = false, length = 20)
-    private String calculationType;  // FORWARD, REVERSE
+    private String stockCode;
 
-    @Column(length = 100)
-    private String stockName;  // 종목명 (선택)
+    /**
+     * 주식명 (예: "삼성전자")
+     */
+    @Column(nullable = false, length = 100)
+    private String stockName;
 
-    @Column
-    private Double oldPrice;  // 기존 매수 단가
+    /**
+     * 기존 보유 수량
+     */
+    @Column(nullable = false)
+    private Integer existingQuantity;
 
-    @Column
-    private Integer oldQuantity;  // 기존 보유 수량
+    /**
+     * 기존 평균 매수가
+     */
+    @Column(nullable = false)
+    private Double existingAvgPrice;
 
-    @Column
-    private Double newPrice;  // 추가 매수 단가
+    /**
+     * 추가 매수 수량
+     */
+    @Column(nullable = false)
+    private Integer additionalQuantity;
 
-    @Column
-    private Integer newQuantity;  // 추가 매수 수량
+    /**
+     * 추가 매수가
+     */
+    @Column(nullable = false)
+    private Double additionalPrice;
 
-    @Column
-    private Double averagePrice;  // 계산된 평균 단가
+    /**
+     * 계산된 새로운 평균 매수가
+     */
+    @Column(nullable = false)
+    private Double newAveragePrice;
 
-    @Column
-    private Integer totalQuantity;  // 총 수량
+    /**
+     * 새로운 총 수량 (기존 수량 + 추가 수량)
+     */
+    @Column(nullable = false)
+    private Integer newTotalQuantity;
 
-    @Column
-    private Double totalAmount;  // 총 투자금액
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    /**
+     * 기록 생성일시
+     */
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 }

@@ -106,14 +106,12 @@
                             <td th:text="${portfolio.stockCode}">005930</td>
                             <td th:text="${portfolio.quantity} + '주'">100주</td>
                             <td th:text="${#numbers.formatDecimal(portfolio.averagePrice, 0, 'COMMA', 0, 'POINT')} + '원'">70,000원</td>
-                            <td th:text="${#numbers.formatDecimal(portfolio.currentPrice != null ? portfolio.currentPrice : portfolio.averagePrice, 0, 'COMMA', 0, 'POINT')} + '원'">72,000원</td>
-                            <td th:text="${#numbers.formatDecimal((portfolio.currentPrice != null ? portfolio.currentPrice : portfolio.averagePrice) * portfolio.quantity, 0, 'COMMA', 0, 'POINT')} + '원'">7,200,000원</td>
-                            <td th:with="pl=((portfolio.currentPrice != null ? portfolio.currentPrice : portfolio.averagePrice) * portfolio.quantity - portfolio.totalInvestment)"
-                                th:style="${pl >= 0} ? 'color: #ef4444' : 'color: #3b82f6'"
-                                th:text="${pl >= 0 ? '+' : ''} + ${#numbers.formatDecimal(pl, 0, 'COMMA', 0, 'POINT')} + '원'">+200,000원</td>
-                            <td th:with="plr=(((portfolio.currentPrice != null ? portfolio.currentPrice : portfolio.averagePrice) * portfolio.quantity - portfolio.totalInvestment) / portfolio.totalInvestment * 100)"
-                                th:style="${plr >= 0} ? 'color: #ef4444; font-weight: bold' : 'color: #3b82f6; font-weight: bold'"
-                                th:text="${plr >= 0 ? '+' : ''} + ${#numbers.formatDecimal(plr, 1, 'COMMA', 2, 'POINT')} + '%'">+2.86%</td>
+                            <td th:text="${#numbers.formatDecimal(portfolio.currentPrice, 0, 'COMMA', 0, 'POINT')} + '원'">72,000원</td>
+                            <td th:text="${#numbers.formatDecimal(portfolio.evaluationAmount, 0, 'COMMA', 0, 'POINT')} + '원'">7,200,000원</td>
+                            <td th:style="${portfolio.profitLoss >= 0} ? 'color: #ef4444' : 'color: #3b82f6'"
+                                th:text="${portfolio.profitLoss >= 0 ? '+' : ''} + ${#numbers.formatDecimal(portfolio.profitLoss, 0, 'COMMA', 0, 'POINT')} + '원'">+200,000원</td>
+                            <td th:style="${portfolio.profitLossRate >= 0} ? 'color: #ef4444; font-weight: bold' : 'color: #3b82f6; font-weight: bold'"
+                                th:text="${portfolio.profitLossRate >= 0 ? '+' : ''} + ${#numbers.formatDecimal(portfolio.profitLossRate, 1, 'COMMA', 2, 'POINT')} + '%'">+2.86%</td>
                             <td>
                                 <form th:action="@{/portfolio/delete/{id}(id=${portfolio.id})}" method="post" style="display: inline;">
                                     <button type="submit" class="btn-danger-small" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</button>

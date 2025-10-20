@@ -1,44 +1,53 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Menu;
-import com.example.demo.entity.User;
 import com.example.demo.service.MenuService;
 import com.example.demo.service.UserService;
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.List;
-
 /**
  * 대시보드 컨트롤러
- * 로그인 후 메인 대시보드 페이지 및 사용자별 메뉴 제공
+ *
+ * 로그인 후 표시되는 메인 대시보드 페이지를 처리합니다.
+ * 사용자 정보와 역할 기반 메뉴를 표시합니다.
+ *
+ * BaseController를 상속받아 공통 로직을 재사용합니다.
+ *
+ * @author JAVA-WEB-PROTO
+ * @version 1.0
  */
+@Slf4j
 @Controller
-@RequiredArgsConstructor
-public class DashboardController {
+public class DashboardController extends BaseController {
 
-    private final UserService userService;
-    private final MenuService menuService;
+    /**
+     * 생성자 주입
+     *
+     * @param userService 사용자 서비스
+     * @param menuService 메뉴 서비스
+     */
+    public DashboardController(UserService userService, MenuService menuService) {
+        super(userService, menuService);
+    }
 
+    /**
+     * 대시보드 페이지
+     *
+     * 사용자 정보와 접근 가능한 메뉴를 모델에 추가하여 대시보드를 표시합니다.
+     *
+     * @param authentication Spring Security 인증 객체
+     * @param model          뷰에 전달할 모델
+     * @return 대시보드 뷰 이름
+     */
     @GetMapping("/dashboard")
     public String dashboard(Authentication authentication, Model model) {
-        String username = authentication.getName();
-        User user = userService.getUserByUsername(username);
+        log.info("대시보드 접근 - 사용자: {}", authentication.getName());
 
-        // 사용자 메뉴 가져오기
-        List<Menu> menus = menuService.getMenusForUser(user);
-
-        // 관리자 여부 확인
-        boolean isAdmin = authentication.getAuthorities()
-                .contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
-
-        model.addAttribute("user", user);
-        model.addAttribute("menus", menus);
-        model.addAttribute("isAdmin", isAdmin);
+        // BaseController의 공통 메서드를 사용하여 모델에 속성 추가
+        addCommonAttributes(model, authentication);
 
         return "dashboard";
     }
